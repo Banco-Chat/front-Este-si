@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 
 export interface CardFieldConfig {
   key: string;
@@ -33,6 +33,8 @@ export class GenericCard {
   @Input() actions: CardActionConfig[] = [];
   @Output() action = new EventEmitter<string>();
 
+  amounts = signal<Record<string, number>>({});
+
   get subtitlePillClass(): string {
     switch (this.subtitleVariant) {
       case 'positive':
@@ -46,6 +48,14 @@ export class GenericCard {
 
   clampPercent(value: any): number {
     return Math.min(100, Math.max(0, Number(value) || 0));
+  }
+
+  onAmountInput(actionLabel: string, value: number) {
+    this.amounts.update(current => ({ ...current, [actionLabel]: value }));
+  }
+
+  isAmountValid(actionLabel: string): boolean {
+    return (this.amounts()[actionLabel] || 0) > 0;
   }
 
   runAction(actionConfig: CardActionConfig, amount?: number) {

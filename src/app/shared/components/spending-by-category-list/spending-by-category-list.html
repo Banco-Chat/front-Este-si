@@ -1,22 +1,33 @@
 <div class="h-full flex flex-col bg-white border border-gray-200 rounded-2xl shadow-xs p-4 space-y-3">
   <div class="flex items-center justify-between shrink-0 gap-2">
     <h4 class="text-xs font-bold uppercase tracking-wide text-gray-400">Gasto por categoría</h4>
-    @if (total > 0) {
-      <span class="text-xs font-bold text-(--text-color) shrink-0">{{ total | currency:'MXN':'symbol-narrow':'1.2-2' }}</span>
-    }
   </div>
 
   @if (!segments.length) {
     <p class="flex-1 flex items-center justify-center text-sm text-gray-400 text-center py-2">No hay gastos registrados</p>
   } @else {
-    <div class="flex gap-[2px] h-3 rounded-full overflow-hidden bg-white shrink-0">
-      @for (segment of segments; track segment.categoryName) {
-        <div
-          [style.width.%]="segment.percent"
-          [style.background-color]="segment.color"
-          [attr.title]="segmentTooltip(segment)">
-        </div>
-      }
+    <div class="flex justify-center shrink-0">
+      <svg viewBox="0 0 140 140" class="w-36 h-36" role="img" [attr.aria-label]="'Gasto por categoría, total ' + (total | currency:'MXN':'symbol-narrow':'1.2-2')">
+        <circle [attr.cx]="center" [attr.cy]="center" [attr.r]="radius" fill="none" class="stroke-gray-100" [attr.stroke-width]="strokeWidth"></circle>
+        <g [attr.transform]="'rotate(-90 ' + center + ' ' + center + ')'">
+          @for (segment of donutSegments; track segment.categoryName) {
+            <circle
+              [attr.cx]="center"
+              [attr.cy]="center"
+              [attr.r]="radius"
+              fill="none"
+              [attr.stroke]="segment.color"
+              [attr.stroke-width]="strokeWidth"
+              stroke-linecap="round"
+              [attr.stroke-dasharray]="segment.dashArray"
+              [attr.stroke-dashoffset]="segment.dashOffset">
+              <title>{{ segmentTooltip(segment) }}</title>
+            </circle>
+          }
+        </g>
+        <text [attr.x]="center" [attr.y]="center - 4" text-anchor="middle" class="fill-(--text-color) text-[15px] font-bold">{{ total | currency:'MXN':'symbol-narrow':'1.0-0' }}</text>
+        <text [attr.x]="center" [attr.y]="center + 14" text-anchor="middle" class="fill-gray-400 text-[9px] font-semibold uppercase tracking-wide">Total gastado</text>
+      </svg>
     </div>
 
     <div class="flex-1 space-y-2 overflow-y-auto pr-1">

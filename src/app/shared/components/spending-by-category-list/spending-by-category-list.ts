@@ -31,6 +31,11 @@ const CATEGORICAL_PALETTE = [
 const OTHER_COLOR = '#898781'; // muted ink — "Otros" no es una serie con identidad propia
 const MAX_SLOTS = CATEGORICAL_PALETTE.length;
 
+interface DonutSegment extends ChartSegment {
+  dashArray: string;
+  dashOffset: number;
+}
+
 @Component({
   selector: 'app-spending-by-category-list',
   standalone: true,
@@ -41,6 +46,12 @@ const MAX_SLOTS = CATEGORICAL_PALETTE.length;
 })
 export class SpendingByCategoryList {
   @Input() items: SpendingByCategoryItem[] = [];
+
+  readonly center = 70;
+  readonly radius = 54;
+  readonly strokeWidth = 24;
+
+  private readonly gap = 3;
 
   get total(): number {
     return this.items.reduce((sum, item) => sum + item.total, 0);
@@ -72,6 +83,24 @@ export class SpendingByCategoryList {
     }
 
     return segments;
+  }
+
+  get donutSegments(): DonutSegment[] {
+    const circumference = 2 * Math.PI * this.radius;
+    let cumulative = 0;
+
+    return this.segments.map(segment => {
+      const rawLength = (segment.percent / 100) * circumference;
+      const length = Math.max(rawLength - this.gap, 0);
+      const dashOffset = -cumulative;
+      cumulative += rawLength;
+
+      return {
+        ...segment,
+        dashArray: `${length} ${circumference - length}`,
+        dashOffset,
+      };
+    });
   }
 
   segmentTooltip(segment: ChartSegment): string {

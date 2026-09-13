@@ -41,8 +41,8 @@
       @for (actionConfig of actions; track actionConfig.label) {
         @if (actionConfig.requiresAmount) {
           <div class="flex items-center gap-2">
-            <input #amountInput type="number" min="1" [placeholder]="actionConfig.amountLabel || 'Monto'" class="w-full h-9 px-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-(--primary-color)" />
-            <button type="button" (click)="runAction(actionConfig, amountInput.valueAsNumber)" [disabled]="!amountInput.value" class="shrink-0 px-3 h-9 rounded-lg bg-(--primary-color) text-white text-xs font-semibold hover:opacity-90 disabled:opacity-45 cursor-pointer">
+            <input #amountInput type="number" min="1" [placeholder]="actionConfig.amountLabel || 'Monto'" (input)="onAmountInput(actionConfig.label, amountInput.valueAsNumber)" class="w-full h-9 px-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-(--primary-color)" />
+            <button type="button" (click)="runAction(actionConfig, amountInput.valueAsNumber)" [disabled]="!isAmountValid(actionConfig.label)" class="shrink-0 px-3 h-9 rounded-lg bg-(--primary-color) text-white text-xs font-semibold hover:opacity-90 disabled:opacity-45 cursor-pointer">
               {{ actionConfig.label }}
             </button>
           </div>

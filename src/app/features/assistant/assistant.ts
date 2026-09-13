@@ -4,9 +4,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { handleApiError } from '@helpers/error.helper';
 import { Chat } from '@services/chat';
+import { Information } from '@services/information';
 import { Chatbubble } from '@shared/components/chatbubble/chatbubble';
 import { InlineSpinner } from '@shared/components/inline-spinner/inline-spinner';
 import { Skeleton } from '@shared/components/skeleton/skeleton';
+import { userAccounts } from '@stores/auth.store';
 import { chatSessions as chatSessionsStore } from '@stores/chat.store';
 import { catchError, of, take, tap } from 'rxjs';
 import { A2uiBlock } from './a2ui/a2ui-block';
@@ -21,6 +23,7 @@ import { A2uiBlock } from './a2ui/a2ui-block';
 export class Assistant implements OnInit {
   private fb = inject(FormBuilder);
   private chatService = inject(Chat);
+  private informationService = inject(Information);
   private route = inject(ActivatedRoute);
 
   chatForm = this.fb.group({
@@ -143,6 +146,7 @@ export class Assistant implements OnInit {
       tap((response) => {
         if (response.success && response.data) {
           this.chatHistory.update(history => [...history, ...this.buildAssistantEntries(response.data)]);
+          this.refreshAccounts();
         }
       }),
       catchError((error) => {
@@ -155,6 +159,16 @@ export class Assistant implements OnInit {
       })
     ).subscribe(() => {
       this.isStreaming.set(false);
+    });
+  }
+
+  private refreshAccounts() {
+    this.informationService.getAccountInformation().pipe(take(1)).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          userAccounts.set(Array.isArray(response.data) ? response.data : [response.data]);
+        }
+      }
     });
   }
 

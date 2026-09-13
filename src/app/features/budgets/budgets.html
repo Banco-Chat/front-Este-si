@@ -1,0 +1,136 @@
+<div class="animate-fade-in space-y-6 w-full block">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-(--text-color) tracking-tight">Presupuestos</h1>
+      <p class="mt-1 text-sm text-gray-500">Fija límites por categoría y vigila tu gasto</p>
+    </div>
+    <button (click)="openBudgetModal()" [disabled]="!selectedAccountId()" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-(--primary-color)/10 text-(--primary-color) hover:bg-(--primary-color) hover:text-white transition-all duration-200 shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+      <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+      </svg>
+      Nuevo presupuesto
+    </button>
+  </div>
+
+  @if (accounts().length > 1) {
+    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      @for (account of accounts(); track account.id) {
+        <button (click)="selectAccount(account.id)" class="px-4 py-2 rounded-full text-xs shrink-0 transition" [ngClass]="selectedAccountId() === account.id ? 'bg-(--primary-color) text-white shadow-sm font-semibold' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium'">
+          {{ account.alias }}
+        </button>
+      }
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (row of skeletonCards; track row) {
+        <app-skeleton height="10rem" rounded="rounded-2xl"></app-skeleton>
+      }
+    </div>
+  } @else if (!selectedAccountId()) {
+    <p class="p-5 text-sm text-gray-400 text-center bg-white border border-gray-200 rounded-2xl">Selecciona una tarjeta para ver sus presupuestos</p>
+  } @else if (budgets().length === 0) {
+    <p class="p-5 text-sm text-gray-400 text-center bg-white border border-gray-200 rounded-2xl">No tienes presupuestos. Crea el primero.</p>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (budget of budgets(); track budget.id) {
+        <div class="bg-white border border-gray-200 rounded-2xl shadow-xs p-4 space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="text-sm font-bold text-(--text-color) truncate">{{ budget.categoryName }}</h3>
+            @if (progressVariant(budget) !== 'ok') {
+              <span class="shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded-full" [ngClass]="progressVariant(budget) === 'over' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'">
+                {{ progressVariant(budget) === 'over' ? 'Excedido' : 'Cerca del límite' }}
+              </span>
+            }
+          </div>
+
+          <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all" [ngClass]="progressVariant(budget) === 'over' ? 'bg-red-500' : progressVariant(budget) === 'warn' ? 'bg-amber-500' : 'bg-(--primary-color)'" [style.width.%]="progressPercent(budget)"></div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-x-4 gap-y-1">
+            <div>
+              <p class="text-[11px] uppercase tracking-wide text-gray-400">Gastado</p>
+              <p class="text-sm font-semibold text-(--text-color) truncate">{{ (budget.spent || 0) | currency:'MXN':'symbol-narrow':'1.2-2' }}</p>
+            </div>
+            <div>
+              <p class="text-[11px] uppercase tracking-wide text-gray-400">Límite</p>
+              <p class="text-sm font-semibold text-(--text-color) truncate">{{ budget.limitAmount | currency:'MXN':'symbol-narrow':'1.2-2' }}</p>
+            </div>
+          </div>
+
+          <p class="text-[11px] text-gray-400">{{ budget.startPeriod | date:'dd MMM' }} – {{ budget.endPeriod | date:'dd MMM yyyy' }}</p>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- MODAL NUEVO PRESUPUESTO -->
+<dialog id="budgetModal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box bg-white p-6 max-h-[90vh] overflow-y-auto rounded-t-3xl sm:rounded-2xl sm:max-w-lg shadow-xl">
+    <div class="flex items-center justify-between pb-4 border-b border-gray-100">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-full bg-(--primary-color)/10 text-(--primary-color) flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><rect x="4" y="10" width="4" height="10" rx="1" /><rect x="10" y="6" width="4" height="14" rx="1" /><rect x="16" y="13" width="4" height="7" rx="1" /><path d="M3 4h18" stroke-dasharray="2 2" /></svg>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-(--text-color)">Nuevo presupuesto</h3>
+          <p class="text-xs text-gray-400">Define un límite de gasto por categoría</p>
+        </div>
+      </div>
+      <button (click)="closeBudgetModal()" class="text-gray-400 hover:text-gray-600 cursor-pointer p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
+      </button>
+    </div>
+
+    <form [formGroup]="budgetForm" class="py-4 space-y-2 md:space-y-4">
+      <div class="grid grid-cols-1">
+        <div>
+          <label class="text-xs font-semibold text-gray-700">Categoría</label>
+          <select formControlName="categoryId" class="mt-1 w-full h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-(--text-color) focus:outline-none focus:border-(--primary-color) transition-all">
+            <option value="" disabled selected>Selecciona una categoría</option>
+            @for (category of categoriesData(); track category.id) {
+              <option [value]="category.id">{{ category.name }}</option>
+            }
+          </select>
+          <app-error-messages [control]="f['categoryId']" label="Este campo"></app-error-messages>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1">
+        <div>
+          <label class="text-xs font-semibold text-gray-700">Monto límite</label>
+          <input type="number" formControlName="limitAmount" placeholder="3000" min="1" class="mt-1 w-full h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-(--text-color) placeholder:text-gray-400 focus:outline-none focus:border-(--primary-color) transition-all" />
+          <app-error-messages [control]="f['limitAmount']" label="Este campo"></app-error-messages>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-semibold text-gray-700">Desde</label>
+          <input type="date" formControlName="startPeriod" class="mt-1 w-full h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-(--text-color) focus:outline-none focus:border-(--primary-color) transition-all" />
+          <app-error-messages [control]="f['startPeriod']" label="Este campo"></app-error-messages>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-700">Hasta</label>
+          <input type="date" formControlName="endPeriod" class="mt-1 w-full h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-(--text-color) focus:outline-none focus:border-(--primary-color) transition-all" />
+          <app-error-messages [control]="f['endPeriod']" label="Este campo"></app-error-messages>
+        </div>
+      </div>
+    </form>
+
+    <div class="modal-action pt-4 border-t border-gray-100 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 m-0">
+      <button (click)="closeBudgetModal()" class="w-full sm:w-auto btn bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-lg md:rounded-xl h-10 min-h-0 text-xs font-semibold shadow-xs cursor-pointer">
+        Cancelar
+      </button>
+      <button type="button" (click)="onSubmit()" [disabled]="sending()" class="w-full sm:w-auto btn bg-(--primary-color) hover:opacity-90 text-white border-none rounded-lg md:rounded-xl h-10 min-h-0 text-xs font-semibold px-5 shadow-xs cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2">
+        @if (sending()) {
+          <app-inline-spinner [size]="14"></app-inline-spinner>
+        }
+        Guardar presupuesto
+      </button>
+    </div>
+  </div>
+</dialog>

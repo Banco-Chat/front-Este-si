@@ -41,6 +41,11 @@ export class MainLayout implements OnInit {
       icon: 'savingsGoals'
     },
     {
+      path: '/budgets',
+      label: 'Presupuestos',
+      icon: 'budgets'
+    },
+    {
       path: '/transfers',
       label: 'Transferencias',
       icon: 'transfers'

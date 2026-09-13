@@ -11,6 +11,7 @@
       "@bank-transactions/*": ["./src/app/features/bank-transactions/*"],
       "@assistant/*": ["./src/app/features/assistant/*"],
       "@savings-goals/*": ["./src/app/features/savings-goals/*"],
+      "@budgets/*": ["./src/app/features/budgets/*"],
       "@transfers/*": ["./src/app/features/transfers/*"],
       "@services/*": ["./src/app/core/services/*"],
       "@helpers/*": ["./src/app/core/helpers/*"],
