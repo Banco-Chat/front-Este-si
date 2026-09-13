@@ -1,0 +1,112 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap");
+@import "tailwindcss";
+@source inline("bg-{red,orange,yellow,green,blue,purple,cyan,pink,indigo,emerald,amber,lime,teal,sky,violet,fuchsia,rose,slate,gray,zinc,neutral,stone,taupe,mauve,mist,olive}-{400,500,600,700}");
+@plugin "daisyui" {
+  themes: light --default;
+}
+
+@theme {
+  --font-quicksand: "Quicksand", sans-serif; 
+}
+
+:root {
+  --primary-color: #EB0029;
+  --border-color-1: #C3D4E9;
+  --border-color-2: #ECECEC;
+  --accent-assistant: #2f7d6e;
+  --surface: #faf9f7;
+  --text-color: #1a1a1a;
+  --text-muted: #6b6f6e;
+}
+
+/* SELECT STYLES */
+select, ::picker(select) {
+  appearance: base-select;
+}
+
+select {
+  cursor: pointer;
+  background-color: white;
+  text-align: left;  
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 0.75rem;
+}
+
+select::picker-icon {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.5rem;
+  margin-top: 0;
+  margin-bottom: 0;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+select:open::picker-icon {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='18 15 12 9 6 15'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+::picker(select) {
+  border: 1px solid var(--border-color-2);
+  border-radius: 8px;
+  background-color: var(--bg-2, #ffffff);
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  color: black;
+  padding: 6px;
+}
+
+select option {
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  margin-bottom: 4px;
+  background-color: transparent;
+  color: #374151;
+}
+
+select option:last-child {
+  margin-bottom: 0;
+}
+
+select option:hover {
+  background-color: var(--border-color-2) !important; 
+  color: #111827 !important;
+}
+
+select option:checked {
+  background-color: transparent !important;
+  color: var(--primary-color) !important;
+  font-weight: 600;
+}
+
+select option::checkmark {
+  color: var(--primary-color);
+  font-weight: bold;
+  order: 2;
+  margin-left: auto;
+}
+
+/* SKELETON TEXT (para indicadores de carga tipo "Escribiendo...") */
+.skeleton-text {
+  display: inline-block;
+  padding: 0.15em 0.6em;
+  border-radius: 999px;
+}

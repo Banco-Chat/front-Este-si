@@ -1,0 +1,5 @@
+<div *ngIf="shouldShowError()" class="mt-1 text-(--primary-color) flex flex-col gap-1">
+  @for (error of getAllErrors(); track $index) {
+    <small class="block">• {{ error }}</small>
+  }
+</div>

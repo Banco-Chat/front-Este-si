@@ -1,0 +1,48 @@
+<div class="px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 sm:px-0">
+    <div class="order-2 md:order-1 text-center md:text-left">
+        <p class="text-sm text-gray-700">
+            Mostrando
+            <span class="font-medium">{{ startIndex() }}</span>
+            a
+            <span class="font-medium">{{ endIndex() }}</span>
+            de
+            <span class="font-medium">{{ data().length }}</span>
+            resultados
+        </p>
+    </div>
+
+    <div class="flex-1 flex justify-center md:justify-end order-1 md:order-2 w-full sm:w-auto" *ngIf="totalPages() > 1">
+        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            
+            <button [disabled]="p() === 1" (click)="goToPage(p() - 1)" 
+                class="relative cursor-pointer inline-flex items-center px-3 py-2 sm:px-4 border border-gray-300 text-sm font-medium rounded-l-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 transition-colors">
+                <span class="md:hidden">&lt;</span>
+                <span class="hidden md:inline">Anterior</span>
+            </button>
+            
+            @for (page of visiblePages(); track $index) {
+                @if (page === '...') {
+                    <span class="relative inline-flex items-center justify-center w-10 h-10 border border-gray-300 bg-white text-sm font-medium text-gray-400">
+                        ...
+                    </span>
+                } @else {
+                    <a (click)="goToPage(page)" 
+                    [ngClass]="{
+                        'bg-(--primary-color) border-(--primary-color) text-white z-10': p() === page, 
+                        'bg-white border-gray-300 text-gray-500 hover:bg-gray-50': p() !== page,
+                        'hidden sm:inline-flex': page !== 1 && page !== totalPages() && page !== p()
+                    }" 
+                    class="relative inline-flex items-center justify-center w-10 h-10 border text-sm font-medium cursor-pointer transition-all">
+                        {{ page }}
+                    </a>
+                }
+            }
+            
+            <button (click)="goToPage(p() + 1)" [disabled]="p() === totalPages()" 
+                class="relative cursor-pointer inline-flex items-center px-3 py-2 sm:px-4 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 transition-colors">
+                <span class="hidden md:inline">Siguiente</span>
+                <span class="md:hidden">&gt;</span>
+            </button>
+        </nav>
+    </div>
+</div>

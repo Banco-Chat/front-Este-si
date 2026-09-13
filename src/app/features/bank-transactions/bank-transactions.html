@@ -1,0 +1,32 @@
+<div class="animate-fade-in space-y-6 w-full block">
+    <div class="space-y-2">
+        <h2 class="text-2xl font-bold text-(--text-color) tracking-tight">Movimientos</h2>
+        <div>
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+                <button class="px-4 py-2 rounded-full text-xs font-semibold bg-(--primary-color) text-white shadow-sm shrink-0">
+                    Todas
+                </button>
+                <button class="px-4 py-2 rounded-full text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 shrink-0 transition">
+                    Restaurantes
+                </button>
+                <button class="px-4 py-2 rounded-full text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 shrink-0 transition">
+                    Supermercado
+                </button>
+                <button class="px-4 py-2 rounded-full text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 shrink-0 transition">
+                    Transporte
+                </button>
+                <button class="px-4 py-2 rounded-full text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 shrink-0 transition">
+                    Entretenimiento
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-xs overflow-hidden">
+      <app-bank-transaction-item company="Supermercado La Comer" description="Compra de víveres" [amount]="-1200" [date]="'2023-09-07'"></app-bank-transaction-item>
+      <app-bank-transaction-item company="Uber" description="Viaje a casa" [amount]="-250" [date]="'2023-09-08'"></app-bank-transaction-item>
+      <app-bank-transaction-item company="Cinepolis" description="Entrada de cine" [amount]="-180" [date]="'2023-09-09'"></app-bank-transaction-item>
+      <app-bank-transaction-item company="Restaurante El Buen Sabor" description="Cena con amigos" [amount]="-450" [date]="'2023-09-10'"></app-bank-transaction-item>
+      <app-bank-transaction-item company="Pago de nómina" description="Ingreso mensual" [amount]="25000" [date]="'2023-09-11'"></app-bank-transaction-item>
+    </div>
+</div>

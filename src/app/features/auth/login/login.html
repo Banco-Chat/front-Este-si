@@ -1,0 +1,47 @@
+<div class="min-h-screen bg-base-300 flex items-center justify-center p-0 sm:p-4">
+  <div class="w-full sm:max-w-[420px] min-h-screen sm:min-h-0 bg-white sm:rounded-2xl sm:shadow-xl flex flex-col justify-between py-8 px-6 sm:p-8">  
+    <div>
+      <div class="mb-6">
+        <div class="w-12 h-12 bg-(--primary-color) rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-sm">
+          B
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h1 class="text-2xl font-bold text-neutral tracking-tight">
+          Hola de nuevo
+        </h1>
+        <p class="text-xs sm:text-sm text-neutral/60 mt-1">
+          Entra a tu cuenta para ver tus finanzas.
+        </p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4" >
+        <div class="form-control w-full">
+          <label class="label pb-1">
+            <span class="label-text text-xs text-neutral/70 font-medium">Nombre de usuario</span>
+          </label>
+          <input formControlName="userName" [value]="'jperez'" type="text" placeholder="tu nombre de usuario" class="input input-bordered w-full bg-transparent focus:bg-white text-sm rounded-lg border-gray-300 focus:border-[#D90013] outline-none transition py-5"/>
+          <app-error-messages [control]="f['userName']" label="Este campo"></app-error-messages>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label pb-1">
+            <span class="label-text text-xs text-neutral/70 font-medium">Contraseña</span>
+          </label>
+          <input formControlName="password" [value]="'password123'" type="password" placeholder="••••••••" class="input input-bordered w-full bg-transparent focus:bg-white text-sm rounded-lg border-gray-300 focus:border-[#D90013] outline-none transition py-5"/>
+          <app-error-messages [control]="f['password']" label="Este campo"></app-error-messages>
+        </div>
+
+        <div class="pt-2">
+          <button type="submit" [disabled]="loading()" class="w-full py-2.5 px-4 bg-(--primary-color) hover:bg-[#b50010] text-white font-semibold rounded-lg transition duration-200 text-sm flex items-center justify-center gap-2 hover:cursor-pointer disabled:opacity-60">
+            @if (loading()) {
+              <app-inline-spinner [size]="16"></app-inline-spinner>
+            }
+            Entrar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

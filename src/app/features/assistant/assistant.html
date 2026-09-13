@@ -1,0 +1,51 @@
+
+<div class="flex flex-col w-full max-w-5xl mx-auto px-3 sm:px-4 h-full overflow-hidden">
+    <div #scrollContainer class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden space-y-4 py-4 pr-1 scroll-smooth">
+        @if (startingSession()) {
+            @for (row of [1, 2, 3]; track row) {
+                <div class="flex w-full mb-3" [ngClass]="row % 2 === 0 ? 'justify-end' : 'justify-start'">
+                    <app-skeleton width="65%" height="2.5rem" rounded="rounded-2xl"></app-skeleton>
+                </div>
+            }
+        } @else {
+            @for (message of chatHistory(); track $index) {
+                @if (message.type === 'text') {
+                    <app-chatbubble [message]="message.content" [direction]="message.direction"></app-chatbubble>
+                }
+
+                @if (message.type === 'ui-block') {
+                    <div class="flex w-full mb-3" [ngClass]="message.direction === 'outgoing' ? 'justify-end' : 'justify-start'">
+                        <div class="w-full max-w-[92%] sm:max-w-xl md:max-w-2xl min-w-0">
+                            <app-a2ui-block
+                                [componentType]="message.componentType"
+                                [props]="message.props"
+                                (action)="onA2uiAction($event)">
+                            </app-a2ui-block>
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (isStreaming()) {
+                <div class="flex w-full mb-3 justify-start">
+                    <div class="px-4 py-3 bg-white border border-gray-100 rounded-2xl rounded-bl-xs shadow-sm">
+                        <span class="skeleton skeleton-text text-xs sm:text-sm font-medium">Analizando...</span>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="pt-1 pb-2 md:pb-0 shrink-0 w-full" style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom));">
+        <form [formGroup]="chatForm" (ngSubmit)="sendMessage()" class="flex items-center gap-2 bg-white border border-gray-200 p-2 rounded-xl shadow-sm focus-within:border-(--primary-color) transition-all">
+            <input type="text" formControlName="prompt" [placeholder]="startingSession() ? 'Iniciando sesión...' : 'Escribe lo que necesitas...'" [attr.disabled]="startingSession() || isStreaming() ? true : null" class="w-full min-w-0 h-10 px-3 bg-transparent text-sm text-(--text-color) placeholder:text-gray-400 focus:outline-none"/>
+            <button type="submit" [disabled]="chatForm.invalid || startingSession() || isStreaming()" class="btn bg-(--primary-color) hover:opacity-90 disabled:opacity-45 text-white border-none rounded-full w-10 h-10 min-h-0 p-0 shadow-xs cursor-pointer flex items-center justify-center shrink-0">
+                @if (startingSession() || isStreaming()) {
+                    <app-inline-spinner [size]="18"></app-inline-spinner>
+                } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-send"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
+                }
+            </button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,11 @@
+<div class="p-4 sm:p-5 flex items-center justify-between border-b border-gray-100 hover:bg-gray-50/50 transition">
+    <div>
+        <p class="text-sm font-semibold text-(--text-color)">{{ description }}</p>
+        <div class="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
+            <p>{{ type }}</p>
+            <span class="w-1 h-1 rounded-full bg-gray-400"></span>
+            <p>{{ date | date:'dd MMMM yyyy' }}</p>
+        </div>
+    </div>
+    <span class="text-sm sm:text-base font-bold text-gray-800">{{ amount | currency:'MXN':'symbol-narrow':'1.2-2' }}</span>
+</div>

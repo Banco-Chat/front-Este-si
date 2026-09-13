@@ -1,0 +1,25 @@
+<div class="space-y-2">
+  @if (title) {
+    <h4 class="text-xs font-bold uppercase tracking-wide text-gray-400 px-1">{{ title }}</h4>
+  }
+
+  @if (!items.length) {
+    <p class="p-4 text-sm text-gray-400 text-center bg-white border border-gray-200 rounded-2xl">{{ emptyMessage }}</p>
+  } @else {
+    <div class="space-y-2">
+      @for (item of items; track $index) {
+        <app-generic-card
+          [data]="item"
+          [titleKey]="titleKey"
+          [fallbackTitle]="fallbackTitle"
+          [subtitleKey]="subtitleKey"
+          [subtitleVariant]="subtitleVariant"
+          [progressKey]="progressKey"
+          [fields]="fields"
+          [actions]="actions"
+          (action)="action.emit($event)">
+        </app-generic-card>
+      }
+    </div>
+  }
+</div>

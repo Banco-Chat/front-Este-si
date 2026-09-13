@@ -1,0 +1,57 @@
+<div class="bg-white border border-gray-200 rounded-2xl shadow-xs p-4 space-y-3">
+  @if (titleKey || fallbackTitle) {
+    <div class="flex items-center justify-between gap-2">
+      <h3 class="text-sm font-bold text-(--text-color) truncate">{{ (titleKey && data[titleKey]) || fallbackTitle }}</h3>
+      @if (subtitleKey && data[subtitleKey]) {
+        <span class="shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded-full" [ngClass]="subtitlePillClass">{{ data[subtitleKey] }}</span>
+      }
+    </div>
+  }
+
+  @if (progressKey && data[progressKey] !== undefined && data[progressKey] !== null) {
+    <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+      <div class="h-full bg-(--primary-color) rounded-full transition-all" [style.width.%]="clampPercent(data[progressKey])"></div>
+    </div>
+  }
+
+  <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+    @for (field of fields; track field.key) {
+      <div class="min-w-0">
+        <p class="text-[11px] uppercase tracking-wide text-gray-400">{{ field.label }}</p>
+        @switch (field.format) {
+          @case ('currency') {
+            <p class="text-sm font-semibold text-(--text-color) truncate">{{ data[field.key] | currency:'MXN':'symbol-narrow':'1.2-2' }}</p>
+          }
+          @case ('date') {
+            <p class="text-sm font-semibold text-(--text-color) truncate">{{ data[field.key] | date:'dd MMM yyyy' }}</p>
+          }
+          @case ('percent') {
+            <p class="text-sm font-semibold text-(--text-color) truncate">{{ data[field.key] }}%</p>
+          }
+          @default {
+            <p class="text-sm font-semibold text-(--text-color) truncate">{{ data[field.key] ?? '—' }}</p>
+          }
+        }
+      </div>
+    }
+  </div>
+
+  @if (actions.length) {
+    <div class="pt-2 border-t border-gray-100 flex flex-col gap-2">
+      @for (actionConfig of actions; track actionConfig.label) {
+        @if (actionConfig.requiresAmount) {
+          <div class="flex items-center gap-2">
+            <input #amountInput type="number" min="1" [placeholder]="actionConfig.amountLabel || 'Monto'" class="w-full h-9 px-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-(--primary-color)" />
+            <button type="button" (click)="runAction(actionConfig, amountInput.valueAsNumber)" [disabled]="!amountInput.value" class="shrink-0 px-3 h-9 rounded-lg bg-(--primary-color) text-white text-xs font-semibold hover:opacity-90 disabled:opacity-45 cursor-pointer">
+              {{ actionConfig.label }}
+            </button>
+          </div>
+        } @else {
+          <button type="button" (click)="runAction(actionConfig)" class="w-full h-9 rounded-lg bg-(--primary-color) text-white text-xs font-semibold hover:opacity-90 cursor-pointer">
+            {{ actionConfig.label }}
+          </button>
+        }
+      }
+    </div>
+  }
+</div>
