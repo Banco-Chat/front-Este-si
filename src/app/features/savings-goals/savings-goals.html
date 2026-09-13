@@ -1,10 +1,10 @@
 <div class="animate-fade-in space-y-6 w-full block">
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-(--text-color) tracking-tight">Metas de ahorro</h1>
-      <p class="mt-1 text-sm text-gray-500">Define objetivos y sigue tu progreso</p>
-    </div>
-    <button (click)="openGoalModal()" [disabled]="!selectedAccountId()" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-(--primary-color)/10 text-(--primary-color) hover:bg-(--primary-color) hover:text-white transition-all duration-200 shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+    <div class="flex flex-col md:flex-row gap-4 md:items-center md:justify-between">    
+      <div>
+        <h1 class="text-2xl font-bold text-(--text-color) tracking-tight">Metas de ahorro</h1>
+        <p class="mt-1 text-sm text-gray-500">Define objetivos y sigue tu progreso</p>
+      </div>
+    <button (click)="openGoalModal()" [disabled]="!selectedAccountId()" class="inline-flex self-start md:self-auto items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-(--primary-color)/10 text-(--primary-color) hover:bg-(--primary-color) hover:text-white transition-all duration-200 shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
       <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
       </svg>
