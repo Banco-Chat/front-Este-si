@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, afterRenderEffect, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { handleApiError } from '@helpers/error.helper';
 import { Chat } from '@services/chat';
 import { Information } from '@services/information';
@@ -25,6 +25,7 @@ export class Assistant implements OnInit {
   private chatService = inject(Chat);
   private informationService = inject(Information);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   chatForm = this.fb.group({
     prompt: ['', Validators.required]
@@ -56,9 +57,10 @@ export class Assistant implements OnInit {
   ngOnInit() {
     this.route.queryParamMap.subscribe(params => {
       const sessionParam = params.get('session');
+      const isNew = params.has('new');
       const querySessionId = sessionParam ? Number(sessionParam) : null;
 
-      if (this.queryInitialized && querySessionId === this.lastQuerySessionId) return;
+      if (this.queryInitialized && querySessionId === this.lastQuerySessionId && !isNew) return;
 
       this.queryInitialized = true;
       this.lastQuerySessionId = querySessionId;
@@ -69,9 +71,38 @@ export class Assistant implements OnInit {
 
       if (querySessionId) {
         this.loadExistingSession(querySessionId);
+      } else if (isNew) {
+        this.createNewSession();
+      } else {
+        this.openMostRecentOrNewSession();
+      }
+    });
+  }
+
+  /** Entrada directa a /assistant (URL, refresh): retoma el último chat en vez de crear uno nuevo. */
+  private openMostRecentOrNewSession() {
+    this.chatService.getSessions().pipe(
+      take(1),
+      catchError(() => of(null))
+    ).subscribe(response => {
+      const sessions = response?.success && Array.isArray(response.data) ? response.data : [];
+
+      if (sessions.length) {
+        const mostRecent = [...sessions].sort((a, b) => b.id - a.id)[0];
+        this.lastQuerySessionId = mostRecent.id;
+        this.syncSessionQueryParam(mostRecent.id);
+        this.loadExistingSession(mostRecent.id);
       } else {
         this.createNewSession();
       }
+    });
+  }
+
+  private syncSessionQueryParam(sessionId: number) {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { session: sessionId },
+      replaceUrl: true
     });
   }
 
@@ -97,7 +128,9 @@ export class Assistant implements OnInit {
         if (response.success && response.data) {
           this.sessionId = response.data.id;
           this.activeSession.set(response.data);
+          this.lastQuerySessionId = response.data.id;
           chatSessionsStore.update(list => [response.data, ...list]);
+          this.syncSessionQueryParam(response.data.id);
         }
       }),
       catchError((error) => {

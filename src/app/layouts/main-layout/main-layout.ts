@@ -152,7 +152,7 @@ export class MainLayout implements OnInit {
 
   goToAssistant() {
     this.closeOnMobile();
-    this.router.navigate(['/assistant']);
+    this.router.navigate(['/assistant'], { queryParams: { new: 1 } });
   }
 
   isAssistantRoute(): boolean {
